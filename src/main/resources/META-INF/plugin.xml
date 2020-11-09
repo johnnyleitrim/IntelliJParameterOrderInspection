@@ -1,0 +1,26 @@
+<idea-plugin>
+
+  <id>com.jfarrelly.intellij.plugin.method.parameter.order.code.inspection</id>
+  <name>Method Parameter Order Inspection</name>
+  <depends>com.intellij.modules.java</depends>
+
+  <description>
+    <![CDATA[
+      Adds a Java code inspection to check if parameters are passed to methods in the correct order.<br>Adds entries to
+      <b>Preferences | Editor | Inspections | Java | Probable Bugs</b>.
+    ]]>
+  </description>
+  <vendor url="https://github.com/johnnyleitrim/IntelliJParameterOrderInspection">John Farrelly</vendor>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <localInspection language="JAVA"
+                     displayName="Parameters should be passed in the correct order"
+                     groupPath="Java"
+                     groupBundle="messages.InspectionsBundle"
+                     groupKey="group.names.probable.bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.jfarrelly.intellij.plugin.code.inspection.MethodParameterOrderInspection"/>
+  </extensions>
+
+</idea-plugin>

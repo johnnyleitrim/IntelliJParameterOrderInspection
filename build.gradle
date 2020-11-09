@@ -1,0 +1,17 @@
+plugins {
+  id 'java'
+  id 'org.jetbrains.intellij' version '0.6.1'
+}
+
+group 'com.jfarrelly.intellij.plugin'
+version '1.0.0-alpha'
+
+repositories {
+  mavenCentral()
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+  version '2020.2.3'
+  plugins = ['java']
+}
