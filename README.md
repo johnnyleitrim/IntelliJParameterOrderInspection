@@ -1,4 +1,5 @@
 [IntelliJ plugin page](https://plugins.jetbrains.com/plugin/15354-method-parameter-order-inspection)
+
 [![Build Status](https://travis-ci.org/johnnyleitrim/IntelliJParameterOrderInspection.svg?branch=master)](https://travis-ci.org/johnnyleitrim/IntelliJParameterOrderInspection)
 
 # What is this?
