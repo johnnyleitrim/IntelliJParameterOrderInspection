@@ -1,34 +1,30 @@
 <html lang="en">
 <body>
-When the names of parameters in a procedure call match the names of the procedure arguments, it contributes to a clearer, more readable code. However, when the names match but are passed in a
-different order than the method arguments, it indicates a mistake in the parameter order which will likely lead to unexpected results.
-<h2>Noncompliant Code Example</h2>
-<pre>
-Public Function Divide(ByVal divisor As Integer, ByVal dividend As Integer) As Double
-    Return divisor / dividend
-End Function
+Arguments that are passed into a method call in the wrong order can lead to hard-to-spot bugs in code. When these method parameters are of the same type, the compiler will not warn you that you have
+passed them in the wrong order, and no static analysis tool currently highlight this issue.
+<p>
+  This IntelliJ plugin adds a new code inspection under <b>Java &gt; Probable Bugs</b>: <b>Parameters should be passed in the correct order</b>
+</p>
+<p>
+  Running a code analysis on you project with this inspection enabled will highlight places where you may be passing parameters in the wrong order.
+</p>
+<b>Example</b>
+You have a method:
+<code>
+public void insert(String firstName, String lastName) {
+    db.savePerson(firstName, lastName);
+}
+</code>
 
-Public Sub DoTheThing()
-    Dim divisor = 15
-    Dim dividend = 5
-
-    Dim result = Divide(dividend, divisor)  // Noncompliant; operation succeeds, but result is unexpected
-    //...
-End Sub
-</pre>
-<h2>Compliant Solution</h2>
-<pre>
-Public Function Divide(ByVal divisor As Integer, ByVal dividend As Integer) As Double
-    Return divisor / dividend
-End Function
-
-Public Sub DoTheThing()
-    Dim divisor = 15
-    Dim dividend = 5
-
-    Dim result = Divide(divisor, dividend)
-    //...
-End Sub
-</pre>
+However, in one part of your code, you have accidentally passed the arguments in the wrong order:
+<code>
+insert(lastName, firstName);
+</code>
+<p>
+  The compier will not complain, because both arguments are the same type: <code>String</code>.
+</p>
+<p>
+  Running a code analysis with this plugin installed will warn that you are passing arguments in the wrong order.
+</p>
 </body>
 </html>
