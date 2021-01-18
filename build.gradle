@@ -4,10 +4,16 @@ plugins {
 }
 
 group 'com.jfarrelly.intellij.plugin'
-version '1.0.0-alpha'
+version '1.0.0'
 
 repositories {
   mavenCentral()
+}
+
+patchPluginXml {
+  version = project.version
+  sinceBuild = '202'
+  untilBuild = '219.*'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
