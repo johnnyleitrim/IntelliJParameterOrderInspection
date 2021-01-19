@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.JavaElementVisitor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
@@ -20,7 +19,6 @@ import com.intellij.psi.PsiParameter;
 
 public class MethodParameterOrderVisitor extends JavaElementVisitor {
 
-  private static final Logger LOG = Logger.getInstance(MethodParameterOrderVisitor.class);
   private static final String DESCRIPTION_TEMPLATE = "Argument '%s' in different order than '%s' parameter on method '%s'";
   private static final int MIN_ARGUMENTS = 2;
 
@@ -46,7 +44,8 @@ public class MethodParameterOrderVisitor extends JavaElementVisitor {
     if (hasNonNullElements(argumentNames, MIN_ARGUMENTS)) {
       PsiMethod calledMethod = methodCallExpression.resolveMethod();
       if (calledMethod != null) {
-        for (int parameterPosition = 0; parameterPosition < calledMethod.getParameterList().getParametersCount(); parameterPosition++) {
+        int nParametersToCheck = Math.min(calledMethod.getParameterList().getParametersCount(), argumentNames.size());
+        for (int parameterPosition = 0; parameterPosition < nParametersToCheck; parameterPosition++) {
           PsiParameter parameter = calledMethod.getParameterList().getParameter(parameterPosition);
           if (parameter != null) {
             checkParameterPosition(argumentNames, parameterPosition, parameter, methodCallExpression);
