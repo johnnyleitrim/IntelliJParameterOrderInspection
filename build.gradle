@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.jfarrelly.intellij.plugin'
-version '1.0.0'
+version '1.0.1'
 
 repositories {
   mavenCentral()
@@ -16,7 +16,6 @@ patchPluginXml {
   untilBuild = '219.*'
 }
 
-// See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
   version '2020.2.3'
   plugins = ['java']
