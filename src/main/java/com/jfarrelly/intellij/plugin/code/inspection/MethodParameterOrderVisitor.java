@@ -1,37 +1,28 @@
 package com.jfarrelly.intellij.plugin.code.inspection;
 
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.PsiCall;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiParameter;
-
 public class MethodParameterOrderVisitor extends JavaElementVisitor {
 
-  private static final String DESCRIPTION_TEMPLATE =
-      "Argument '%s' in different order than '%s' parameter on method '%s'";
-  private static final int MIN_ARGUMENTS = 2;
+    private static final String DESCRIPTION_TEMPLATE = "Argument '%s' in different order than '%s' parameter on method '%s'";
+    private static final int MIN_ARGUMENTS = 2;
 
-  private final ProblemsHolder holder;
-  private final int minIncorrectParameters;
+    private final ProblemsHolder holder;
+    private final int minOutOfOrderArguments;
 
-  public MethodParameterOrderVisitor(ProblemsHolder holder, int minIncorrectParameters) {
-    this.holder = holder;
-    this.minIncorrectParameters = minIncorrectParameters;
-  }
+    public MethodParameterOrderVisitor(ProblemsHolder holder, int minOutOfOrderArguments) {
+        this.holder = holder;
+        this.minOutOfOrderArguments = minOutOfOrderArguments;
+    }
 
   @Override
   public void visitMethodCallExpression(PsiMethodCallExpression methodCallExpression) {
@@ -50,27 +41,22 @@ public class MethodParameterOrderVisitor extends JavaElementVisitor {
     if (hasNonNullElements(argumentNames, MIN_ARGUMENTS)) {
       PsiMethod calledMethod = methodCallExpression.resolveMethod();
       if (calledMethod != null) {
-        int nParametersToCheck =
-            Math.min(calledMethod.getParameterList().getParametersCount(), argumentNames.size());
-        List<Pair<PsiElement, String>> problems = new ArrayList<>(nParametersToCheck);
-        for (int parameterPosition = 0;
-             parameterPosition < nParametersToCheck;
-             parameterPosition++) {
-          PsiParameter parameter = calledMethod.getParameterList().getParameter(parameterPosition);
-          if (parameter != null) {
-            Pair<PsiElement, String> problem =
-                checkParameterPosition(
-                    argumentNames, parameterPosition, parameter, methodCallExpression);
-            if (problem != null) {
-              problems.add(problem);
-            }
+          int nParametersToCheck = Math.min(calledMethod.getParameterList().getParametersCount(), argumentNames.size());
+          List<Pair<PsiElement, String>> problems = new ArrayList<>(nParametersToCheck);
+          for (int parameterPosition = 0; parameterPosition < nParametersToCheck; parameterPosition++) {
+              PsiParameter parameter = calledMethod.getParameterList().getParameter(parameterPosition);
+              if (parameter != null) {
+                  Pair<PsiElement, String> problem = checkParameterPosition(argumentNames, parameterPosition, parameter, methodCallExpression);
+                  if (problem != null) {
+                      problems.add(problem);
+                  }
+              }
           }
-        }
-        if (problems.size() >= minIncorrectParameters) {
-          for (Pair<PsiElement, String> problem : problems) {
-            holder.registerProblem(problem.first, problem.second);
+          if (problems.size() >= minOutOfOrderArguments) {
+              for (Pair<PsiElement, String> problem : problems) {
+                  holder.registerProblem(problem.first, problem.second);
+              }
           }
-        }
       }
     }
   }
@@ -85,8 +71,7 @@ public class MethodParameterOrderVisitor extends JavaElementVisitor {
     if (!Objects.equals(parameterName, argumentNames.get(parameterPosition))) {
       int argumentPosition = argumentNames.indexOf(parameterName);
       if (argumentPosition != -1 && argumentPosition != parameterPosition) {
-        PsiExpression argument =
-            methodCallExpression.getArgumentList().getExpressions()[argumentPosition];
+          PsiExpression argument = methodCallExpression.getArgumentList().getExpressions()[argumentPosition];
         return Pair.create(
             argument,
             String.format(
