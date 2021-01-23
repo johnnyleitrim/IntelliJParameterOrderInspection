@@ -1,25 +1,33 @@
 package com.jfarrelly.intellij.plugin.code.inspection;
 
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiCall;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.PsiParameter;
+
 public class MethodParameterOrderVisitor extends JavaElementVisitor {
 
-    private static final String DESCRIPTION_TEMPLATE = "Argument '%s' in different order than '%s' parameter on method '%s'";
-    private static final int MIN_ARGUMENTS = 2;
+  private static final String DESCRIPTION_TEMPLATE = "Argument '%s' in different order than '%s' parameter on method '%s'";
+  private static final int MIN_ARGUMENTS = 2;
 
-    private final ProblemsHolder holder;
-    private final int minOutOfOrderArguments;
+  private final ProblemsHolder holder;
+  private final int minOutOfOrderArguments;
 
-    public MethodParameterOrderVisitor(ProblemsHolder holder, int minOutOfOrderArguments) {
+  public MethodParameterOrderVisitor(ProblemsHolder holder, int minOutOfOrderArguments) {
         this.holder = holder;
         this.minOutOfOrderArguments = minOutOfOrderArguments;
     }

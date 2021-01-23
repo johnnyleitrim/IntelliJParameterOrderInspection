@@ -1,12 +1,13 @@
 package com.jfarrelly.intellij.plugin.code.inspection;
 
+import javax.swing.JComponent;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.ui.SingleIntegerFieldOptionsPanel;
 import com.intellij.psi.PsiElementVisitor;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class MethodParameterOrderInspection extends AbstractBaseJavaLocalInspectionTool {
 
@@ -22,6 +23,6 @@ public class MethodParameterOrderInspection extends AbstractBaseJavaLocalInspect
   @Override
   public JComponent createOptionsPanel() {
     return new SingleIntegerFieldOptionsPanel(
-            "Minimum out-of-order arguments", this, "minOutOfOrderArguments");
+        "Minimum out-of-order arguments", this, "minOutOfOrderArguments");
   }
 }
