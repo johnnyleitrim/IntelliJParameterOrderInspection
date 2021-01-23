@@ -1,30 +1,26 @@
-<html lang="en">
+<html>
 <body>
-Arguments that are passed into a method call in the wrong order can lead to hard-to-spot bugs in code. When these method parameters are of the same type, the compiler will not warn you that you have
-passed them in the wrong order, and no static analysis tool currently highlight this issue.
-<p>
-  This IntelliJ plugin adds a new code inspection under <b>Java &gt; Probable Bugs</b>: <b>Parameters should be passed in the correct order</b>
-</p>
-<p>
-  Running a code analysis on you project with this inspection enabled will highlight places where you may be passing parameters in the wrong order.
-</p>
-<b>Example</b>
-You have a method:
-<code>
-public void insert(String firstName, String lastName) {
-    db.savePerson(firstName, lastName);
-}
-</code>
+Arguments that are passed into a method call in the wrong order can lead to hard-to-spot bugs in code. When these method
+parameters are of the same type, the compiler will not warn you that you have passed them in the wrong order, and no
+static analysis tool currently highlight this issue.
 
+Running a code analysis on you project with this inspection enabled will highlight places where you may be passing
+parameters in the wrong order. For example:
+<!-- tooltip end -->
+<pre><code>
+  public void insert(String firstName, String lastName) {
+    db.savePerson(firstName, lastName);
+  }
+</code></pre>
 However, in one part of your code, you have accidentally passed the arguments in the wrong order:
-<code>
-insert(lastName, firstName);
-</code>
+<pre><code>
+  insert(lastName, firstName);
+</code></pre>
+The compier will not complain, because both arguments are the same type: String. Running a code analysis with this
+plugin installed will warn that you are passing arguments in the wrong order.
 <p>
-  The compier will not complain, because both arguments are the same type: <code>String</code>.
-</p>
+    Use the field below to to specify the minimum number of argument order violations that must be present for problems
+    to be registered with a call.
 <p>
-  Running a code analysis with this plugin installed will warn that you are passing arguments in the wrong order.
-</p>
 </body>
 </html>
