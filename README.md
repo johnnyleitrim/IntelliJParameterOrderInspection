@@ -1,4 +1,10 @@
+# Method Parameter Order Inspection
+<img align="left" src="src/main/resources/META-INF/pluginIcon.svg" alt="Plugin Logo" width="64" height="64">
+An IntelliJ plugin that adds a Java code inspection to check if parameters are passed to methods in the correct order.
+
 [IntelliJ plugin page](https://plugins.jetbrains.com/plugin/15354-method-parameter-order-inspection)
+
+---
 
 [![Build Status](https://travis-ci.org/johnnyleitrim/IntelliJParameterOrderInspection.svg?branch=master)](https://travis-ci.org/johnnyleitrim/IntelliJParameterOrderInspection)
 
