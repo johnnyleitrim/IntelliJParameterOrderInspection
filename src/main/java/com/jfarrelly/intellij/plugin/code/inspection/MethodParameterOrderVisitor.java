@@ -14,6 +14,7 @@ import com.intellij.psi.JavaElementVisitor;
 import com.intellij.psi.PsiCall;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiNamedElement;
@@ -28,9 +29,9 @@ public class MethodParameterOrderVisitor extends JavaElementVisitor {
   private final int minOutOfOrderArguments;
 
   public MethodParameterOrderVisitor(ProblemsHolder holder, int minOutOfOrderArguments) {
-        this.holder = holder;
-        this.minOutOfOrderArguments = minOutOfOrderArguments;
-    }
+    this.holder = holder;
+    this.minOutOfOrderArguments = minOutOfOrderArguments;
+  }
 
   @Override
   public void visitMethodCallExpression(PsiMethodCallExpression methodCallExpression) {
@@ -40,31 +41,40 @@ public class MethodParameterOrderVisitor extends JavaElementVisitor {
       return;
     }
 
-    List<String> argumentNames =
-        new ArrayList<>(methodCallExpression.getArgumentList().getExpressionCount());
-    for (PsiExpression argument : methodCallExpression.getArgumentList().getExpressions()) {
-      argumentNames.add(getArgumentName(argument));
-    }
+    List<String> argumentNames = getArgumentNames(methodCallExpression.getArgumentList());
 
     if (hasNonNullElements(argumentNames, MIN_ARGUMENTS)) {
       PsiMethod calledMethod = methodCallExpression.resolveMethod();
       if (calledMethod != null) {
-          int nParametersToCheck = Math.min(calledMethod.getParameterList().getParametersCount(), argumentNames.size());
-          List<Pair<PsiElement, String>> problems = new ArrayList<>(nParametersToCheck);
-          for (int parameterPosition = 0; parameterPosition < nParametersToCheck; parameterPosition++) {
-              PsiParameter parameter = calledMethod.getParameterList().getParameter(parameterPosition);
-              if (parameter != null) {
-                  Pair<PsiElement, String> problem = checkParameterPosition(argumentNames, parameterPosition, parameter, methodCallExpression);
-                  if (problem != null) {
-                      problems.add(problem);
-                  }
-              }
+        int nParametersToCheck = Math.min(calledMethod.getParameterList().getParametersCount(), argumentNames.size());
+        List<Pair<PsiElement, String>> problems = new ArrayList<>(nParametersToCheck);
+        for (int parameterPosition = 0; parameterPosition < nParametersToCheck; parameterPosition++) {
+          PsiParameter parameter = calledMethod.getParameterList().getParameter(parameterPosition);
+          if (parameter != null) {
+            Pair<PsiElement, String> problem = checkParameterPosition(argumentNames, parameterPosition, parameter, methodCallExpression);
+            if (problem != null) {
+              problems.add(problem);
+            }
           }
-          if (problems.size() >= minOutOfOrderArguments) {
-              for (Pair<PsiElement, String> problem : problems) {
-                  holder.registerProblem(problem.first, problem.second);
-              }
-          }
+        }
+        registerProblems(problems);
+      }
+    }
+  }
+
+  @Nullable
+  private static List<String> getArgumentNames(@NotNull PsiExpressionList argumentList) {
+    List<String> argumentNames = new ArrayList<>(argumentList.getExpressionCount());
+    for (PsiExpression argument : argumentList.getExpressions()) {
+      argumentNames.add(getArgumentName(argument));
+    }
+    return argumentNames;
+  }
+
+  private void registerProblems(@NotNull List<Pair<PsiElement, String>> problems) {
+    if (problems.size() >= minOutOfOrderArguments) {
+      for (Pair<PsiElement, String> problem : problems) {
+        holder.registerProblem(problem.first, problem.second);
       }
     }
   }
@@ -79,7 +89,7 @@ public class MethodParameterOrderVisitor extends JavaElementVisitor {
     if (!Objects.equals(parameterName, argumentNames.get(parameterPosition))) {
       int argumentPosition = argumentNames.indexOf(parameterName);
       if (argumentPosition != -1 && argumentPosition != parameterPosition) {
-          PsiExpression argument = methodCallExpression.getArgumentList().getExpressions()[argumentPosition];
+        PsiExpression argument = methodCallExpression.getArgumentList().getExpressions()[argumentPosition];
         return Pair.create(
             argument,
             String.format(
@@ -93,7 +103,7 @@ public class MethodParameterOrderVisitor extends JavaElementVisitor {
   }
 
   @Nullable
-  private static String getArgumentName(PsiExpression argument) {
+  private static String getArgumentName(@NotNull PsiExpression argument) {
     if (argument.getReference() != null) {
       return toLower(argument.getReference().getElement());
     } else if (argument instanceof PsiMethodCallExpression) {
