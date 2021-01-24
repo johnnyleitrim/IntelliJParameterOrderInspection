@@ -3,7 +3,9 @@
   <id>com.jfarrelly.intellij.plugin.method.parameter.order.code.inspection</id>
   <name>Method Parameter Order Inspection</name>
   <depends>com.intellij.modules.java</depends>
-
+  <change-notes>Add a configuration option to specify the minimum number of argument order violations that must be
+    present for problems to be registered with a call.
+  </change-notes>
   <description>
     <![CDATA[
       Adds a Java code inspection to check if parameters are passed to methods in the correct order.<br>Adds entries to
